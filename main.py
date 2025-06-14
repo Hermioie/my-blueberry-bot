@@ -1,3 +1,4 @@
+# ------------------ 所有 import 语句都集中在顶部 ------------------
 import discord
 import os
 import random
@@ -6,6 +7,17 @@ import datetime
 import asyncio
 from flask import Flask
 from threading import Thread
+
+# --- 网站设置 (用于 UptimeRobot 保持在线) ---
+app = Flask('')
+@app.route('/')
+def home():
+    return "I'm alive"
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+def keep_alive():
+    t = Thread(target=run_flask)
+    t.start()
 
 # --- 决斗功能的状态变量 ---
 duel_initiator = None
@@ -82,13 +94,13 @@ async def on_message(message):
             if message.author == duel_initiator:
                 await message.channel.send("和镜子里的自己比快，可算不上真正的枪手。")
                 return
-
+            
             if message.channel != duel_channel:
                 return
 
             challenger = message.author
             await message.channel.send(f"💥 **“很好。”**\n另一位枪手 **{challenger.display_name}** 从街角的阴影中走出，接受了这场生死对决！空气瞬间凝固了...")
-
+            
             await asyncio.sleep(3)
 
             chosen_outcome = random.choices(duel_outcomes, weights=[d['weight'] for d in duel_outcomes], k=1)[0]
@@ -109,7 +121,7 @@ async def on_message(message):
                 win_text = chosen_outcome["winner_text"].format(loser=loser.display_name)
                 lose_text = chosen_outcome["loser_text"]
                 reversal_text = chosen_outcome["reversal_text"].format(loser=winner.display_name)
-
+                
                 await message.channel.send(f"⚡ **{win_text}**\n**{lose_text}**\n\n...但是！\n\n**{reversal_text}**")
                 await asyncio.sleep(2)
                 try:
@@ -124,7 +136,7 @@ async def on_message(message):
                 participants = [duel_initiator, challenger]
                 random.shuffle(participants)
                 winner, loser = participants[0], participants[1]
-
+                
                 win_text = chosen_outcome["winner_text"].format(loser=loser.display_name)
                 lose_text = chosen_outcome["loser_text"]
 
@@ -152,7 +164,7 @@ async def on_message(message):
             roulette_bullet_position = random.randint(1, roulette_chamber_count)
             roulette_current_pulls = 0
             roulette_participants = []
-
+            
             await message.channel.send(
                 f"嘻嘻~ 我叫蓝莓哦！(o´▽`o)ﾉ\n"
                 f"要来玩个心跳加速的幸运游戏吗？我这里有一把非常漂亮的左轮手枪，**{roulette_chamber_count}**个弹巢中，我已经悄悄填入了**一颗子弹**！\n"
@@ -192,14 +204,14 @@ async def on_message(message):
                     print(f"无法禁言 {loser.display_name}: {e}")
                     failure_message = random.choice(timeout_failure_messages).format(loser=loser.display_name)
                     await message.channel.send(f"\n…哎呀！蓝莓本来想把你关起来的，但是...\n{failure_message}")
-
+                
                 roulette_active = False
 
             else:
                 await message.channel.send(f"咔哒...\n**{message.author.display_name}** 松了一口气，是空膛哦！真好运呢~\n"
                                            f"现在，这把左轮手枪还剩下 **{remaining_chambers}** 个弹巢，下一位勇敢的人是谁呀？")
             return
-
+    
     # --- 随机问号功能 ---
     if random.randint(1, 10) == 1:
         await message.channel.send('？')
