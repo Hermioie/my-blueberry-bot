@@ -1,4 +1,4 @@
-# 🫐 蓝莓 (Blueberry) -  Discord 娱乐伙伴
+# 蓝莓 (Blueberry) -  Discord 娱乐伙伴
 
 蓝莓是一个专为增添服务器乐趣而生的多功能娱乐机器人。
 
