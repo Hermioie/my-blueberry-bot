@@ -20,7 +20,7 @@ def keep_alive():
     t = Thread(target=run_flask)
     t.start()
 
-# --- 新增：时间解析函数及限制 ---
+# --- 时间解析函数及限制 ---
 MIN_MUTE_SECONDS = 10
 MAX_MUTE_SECONDS = 3600 # 1小时
 
@@ -59,13 +59,13 @@ def format_seconds(seconds):
 duel_initiator = None
 duel_channel = None
 duel_timestamp = 0
-duel_custom_duration = None # 新增：用于存储决斗的自定义时长
+duel_custom_duration = None
 DUEL_TIMEOUT_SECONDS = 120
 
 roulette_active = False
 roulette_channel = None
 roulette_timestamp = 0
-roulette_custom_duration = None # 新增：用于存储轮盘的自定义时长
+roulette_custom_duration = None
 roulette_chamber_count = 6
 roulette_bullet_position = 0
 roulette_current_pulls = 0
@@ -73,22 +73,22 @@ roulette_participants = []
 ROULETTE_TIMEOUT_SECONDS = 300
 ROULETTE_MUTE_SECONDS = 480
 
-# --- 西部枪战决斗结果随机池 ---
+# --- 西部枪战决斗结果随机池 (新增 "loser_reaction" 字段) ---
 duel_outcomes = [
-    {"winner_text": "是镇上最快的枪手！在{loser}的手指碰到枪托之前，子弹已经呼啸而出！", "loser_text": "甚至没来得及拔枪，就缓缓倒在了尘土中。", "mute_seconds": 180, "weight": 30},
-    {"winner_text": "在枪响的瞬间侧身翻滚，精准的子弹命中了{loser}持枪的手臂！", "loser_text": "的手枪被打飞，只能痛苦地捂住伤口。", "mute_seconds": 120, "weight": 20},
-    {"winner_text": "的子弹击中了{loser}脚边的威士忌酒瓶，飞溅的玻璃碎片让其阵脚大乱！", "loser_text": "被吓了一跳，狼狈地放弃了抵抗。", "mute_seconds": 60, "weight": 15},
-    {"winner_text": "在最关键的时刻，{loser}的左轮手枪居然卡壳了！真是天意！", "loser_text": "绝望地看着卡壳的枪，迎接了命运的审判。", "mute_seconds": 240, "weight": 10},
+    {"winner_text": "是镇上最快的枪手！在{loser}的手指碰到枪托之前，子弹已经呼啸而出！", "loser_text": "甚至没来得及拔枪，就缓缓倒在了尘土中。", "loser_reaction": "一切都发生得太快了，{loser}的脸上还保持着错愕的表情。", "mute_seconds": 180, "weight": 30},
+    {"winner_text": "在枪响的瞬间侧身翻滚，精准的子弹命中了{loser}持枪的手臂！", "loser_text": "的手枪被打飞，只能痛苦地捂住伤口。", "loser_reaction": "剧痛让{loser}单膝跪地，他知道这场对决已经结束了。", "mute_seconds": 120, "weight": 20},
+    {"winner_text": "的子弹击中了{loser}脚边的威士忌酒瓶，飞溅的玻璃碎片让其阵脚大乱！", "loser_text": "被吓了一跳，狼狈地放弃了抵抗。", "loser_reaction": "{loser}心有余悸地看着脚边的碎片，庆幸子弹没有打中自己。", "mute_seconds": 60, "weight": 15},
+    {"winner_text": "在最关键的时刻，{loser}的左轮手枪居然卡壳了！真是天意！", "loser_text": "绝望地看着卡壳的枪，迎接了命运的审判。", "loser_reaction": "“不...不应该是这样的！” {loser}愤怒地将卡壳的枪扔在地上。", "mute_seconds": 240, "weight": 10},
     {"is_draw": True, "draw_text": "黄沙漫天，两人同时拔枪！两声枪响合为一声，子弹在空中碰撞，擦出耀眼的火花！这场对决，不分胜负！", "mute_seconds": 10, "weight": 5},
-    {"reversal": True, "winner_text": "的手速快如鬼魅，但就在子弹即将命中眉心的千钧一发之际，{loser}的眼神变了！他竟然用两根手指稳稳地夹住了那颗致命的子弹！", "loser_text": "露出了难以置信的表情，在这位深藏不露的高手面前，他已经输了。", "reversal_text": "“你的速度很快，” {loser}缓缓开口，指尖的子弹冒着青烟，“但还不够快。” 说罢，屈指一弹，子弹以更快的速度飞了回去！", "mute_seconds": 600, "weight": 3}
+    {"reversal": True, "winner_text": "的手速快如鬼魅，但就在子弹即将命中眉心的千钧一发之际，{loser}的眼神变了！他竟然用两根手指稳稳地夹住了那颗致命的子弹！", "loser_text": "露出了难以置信的表情，在这位深藏不露的高手面前，他已经输了。", "reversal_text": "“你的速度很快，” {loser}缓缓开口，指尖的子弹冒着青烟，“但还不够快。” 说罢，屈指一弹，子弹以更快的速度飞了回去！", "loser_reaction": "面对这超乎常理的一幕，**{original_winner}** 愣在了原地，冷汗浸湿了他的衣背，他知道，这次他踢到铁板了。", "mute_seconds": 600, "weight": 3}
 ]
 
-# --- 禁言失败时的随机台词 ---
+# --- 禁言失败时的随机台词 (优化了衔接) ---
 timeout_failure_messages = [
-    "警长正要上前铐住 **{loser}**，但突然看清了对方的脸，吓得立马收回了手，敬了个礼！‘哎呀！原来是大人您！小的有眼不识泰山，您当然不需要进禁闭室！’",
-    "**{loser}** 突然从口袋里掏出一袋沉甸甸的金币，悄悄塞给了警长。警长掂了掂，然后假装什么都没看见，吹着口哨走开了。看来，有钱真的可以为所欲为...",
-    "当警长试图靠近 **{loser}** 时，一股无形的气场将他弹开！‘我...我的身体动不了！’ 警长惊恐地发现，有些大人物，是规则无法束缚的！",
-    "**{loser}** 只是冷冷地瞥了警长一眼，警长便冷汗直流，默默地退下了。有些眼神，是惹不起的。",
+    "然而，正当警长准备将 **{loser}** 带走时，他突然看清了对方的脸，吓得立马收回了手，敬了个礼！‘哎呀！原来是大人您！小的有眼不识泰山，您当然不需要进禁闭室！’",
+    "然而，正当警长掏出手铐时，**{loser}** 突然从口袋里掏出一袋沉甸甸的金币，悄悄塞了过去。警长掂了掂，然后假装什么都没看见，吹着口哨走开了。看来，有钱真的可以为所欲为...",
+    "然而，当警长试图靠近 **{loser}** 时，一股无形的气场将他弹开！‘我...我的身体动不了！’ 警长惊恐地发现，有些大人物，是规则无法束缚的！",
+    "然而，**{loser}** 只是冷冷地瞥了警长一眼，警长便冷汗直流，默默地退下了。有些眼神，是惹不起的。",
 ]
 
 # --- 机器人设置 ---
@@ -160,7 +160,6 @@ async def on_message(message):
             await asyncio.sleep(3)
 
             chosen_outcome = random.choices(duel_outcomes, weights=[d['weight'] for d in duel_outcomes], k=1)[0]
-            
             final_mute_seconds = duel_custom_duration if duel_custom_duration is not None else chosen_outcome["mute_seconds"]
             mute_duration = datetime.timedelta(seconds=final_mute_seconds)
 
@@ -179,18 +178,20 @@ async def on_message(message):
                 win_text = chosen_outcome["winner_text"].format(loser=loser.display_name)
                 lose_text = chosen_outcome["loser_text"]
                 reversal_text = chosen_outcome["reversal_text"].format(loser=winner.display_name)
+                loser_reaction = chosen_outcome["loser_reaction"].format(original_winner=loser.display_name)
                 
                 await message.channel.send(f"⚡ **{win_text}**\n**{lose_text}**\n\n...但是！\n\n**{reversal_text}**")
                 await asyncio.sleep(2)
+                await message.channel.send(loser_reaction)
+                await asyncio.sleep(2)
+                
                 try:
-                    final_mute_seconds_reversal = duel_custom_duration if duel_custom_duration is not None else chosen_outcome["mute_seconds"]
-                    mute_duration_reversal = datetime.timedelta(seconds=final_mute_seconds_reversal)
-                    await loser.timeout(mute_duration_reversal, reason="决斗被反杀")
-                    await message.channel.send(f"最终的胜利者是 **{winner.display_name}**！**{loser.display_name}** 因为轻敌而被禁言 **{format_seconds(final_mute_seconds_reversal)}**！")
+                    await loser.timeout(mute_duration, reason="决斗被反杀")
+                    await message.channel.send(f"最终的胜利者是 **{winner.display_name}**！**{loser.display_name}** 因为轻敌，付出了被禁言 **{format_seconds(final_mute_seconds)}** 的代价！")
                 except Exception as e:
                     print(f"无法禁言 {loser.display_name}: {e}")
                     failure_message = random.choice(timeout_failure_messages).format(loser=loser.display_name)
-                    await message.channel.send(f"\n…等等，情况有变！\n{failure_message}")
+                    await message.channel.send(failure_message)
 
             else:
                 participants = [duel_initiator, challenger]
@@ -199,17 +200,23 @@ async def on_message(message):
                 
                 win_text = chosen_outcome["winner_text"].format(loser=loser.display_name)
                 lose_text = chosen_outcome["loser_text"]
-
+                
                 await message.channel.send(f"💨 **{winner.display_name}** {win_text}\n**{loser.display_name}** {lose_text}")
                 await asyncio.sleep(1)
+
+                if chosen_outcome.get("loser_reaction"):
+                    loser_reaction = chosen_outcome["loser_reaction"].format(loser=loser.display_name)
+                    await message.channel.send(loser_reaction)
+                    await asyncio.sleep(2)
+                
                 try:
                     await loser.timeout(mute_duration, reason="枪战落败")
                     await message.channel.send(f"胜利者是 **{winner.display_name}**！失败者 **{loser.display_name}** 将被警长带走关禁闭 **{format_seconds(final_mute_seconds)}**。")
                 except Exception as e:
                     print(f"无法禁言 {loser.display_name}: {e}")
                     failure_message = random.choice(timeout_failure_messages).format(loser=loser.display_name)
-                    await message.channel.send(f"\n…等等，情况有变！\n{failure_message}")
-
+                    await message.channel.send(failure_message)
+            
             duel_initiator = None
             duel_channel = None
             duel_timestamp = 0
