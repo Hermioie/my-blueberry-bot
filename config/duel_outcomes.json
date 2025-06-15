@@ -1,0 +1,45 @@
+[
+    {
+        "winner_text": "是镇上最快的枪手！在{loser}的手指碰到枪托之前，子弹已经呼啸而出！",
+        "loser_text": "甚至没来得及拔枪，就缓缓倒在了尘土中。",
+        "loser_reaction": "一切都发生得太快了，{loser}的脸上还保持着错愕的表情。",
+        "mute_seconds": 180,
+        "weight": 30
+    },
+    {
+        "winner_text": "在枪响的瞬间侧身翻滚，精准的子弹命中了{loser}持枪的手臂！",
+        "loser_text": "的手枪被打飞，只能痛苦地捂住伤口。",
+        "loser_reaction": "剧痛让{loser}单膝跪地，他知道这场对决已经结束了。",
+        "mute_seconds": 120,
+        "weight": 20
+    },
+    {
+        "winner_text": "的子弹击中了{loser}脚边的威士忌酒瓶，飞溅的玻璃碎片让其阵脚大乱！",
+        "loser_text": "被吓了一跳，狼狈地放弃了抵抗。",
+        "loser_reaction": "{loser}心有余悸地看着脚边的碎片，庆幸子弹没有打中自己。",
+        "mute_seconds": 60,
+        "weight": 15
+    },
+    {
+        "winner_text": "在最关键的时刻，{loser}的左轮手枪居然卡壳了！真是天意！",
+        "loser_text": "绝望地看着卡壳的枪，迎接了命运的审判。",
+        "loser_reaction": "“不...不应该是这样的！” {loser}愤怒地将卡壳的枪扔在地上。",
+        "mute_seconds": 240,
+        "weight": 10
+    },
+    {
+        "is_draw": true,
+        "draw_text": "黄沙漫天，两人同时拔枪！两声枪响合为一声，子弹在空中碰撞，擦出耀眼的火花！这场对决，不分胜负！",
+        "mute_seconds": 10,
+        "weight": 5
+    },
+    {
+        "reversal": true,
+        "winner_text": "的手速快如鬼魅，但就在子弹即将命中眉心的千钧一发之际，{loser}的眼神变了！他竟然用两根手指稳稳地夹住了那颗致命的子弹！",
+        "loser_text": "露出了难以置信的表情，在这位深藏不露的高手面前，他已经输了。",
+        "reversal_text": "“你的速度很快，” {loser}缓缓开口，指尖的子弹冒着青烟，“但还不够快。” 说罢，屈指一弹，子弹以更快的速度飞了回去！",
+        "loser_reaction": "面对这超乎常理的一幕，**{original_winner}** 愣在了原地，冷汗浸湿了他的衣背，他知道，这次他踢到铁板了。",
+        "mute_seconds": 600,
+        "weight": 3
+    }
+]
