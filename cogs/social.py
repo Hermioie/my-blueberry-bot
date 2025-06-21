@@ -73,7 +73,7 @@ class SocialCog(commands.Cog, name="社交"):
         if message.interaction:
             return
 
-        if random.randint(1, 10) == 1:
+        if random.randint(1, 100) == 1:
             await message.channel.send('？')
 
 async def setup(bot):
